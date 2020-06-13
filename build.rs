@@ -40,8 +40,6 @@ fn main() {
         unreachable!()
     }
   };
-  
-  println!("cargo:rustc-link-lib=dylib=culibos");
 
   let bindings = bindgen::Builder::default()
     .raw_line("#![allow(warnings)]")
