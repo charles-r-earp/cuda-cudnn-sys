@@ -32,9 +32,9 @@ fn main() {
   let cuda_include = {
     // locate and link cuda libs and headers
     if cfg!(target_os = "linux") {
-        let cudnn_lib = linux_locate_parent_dir("libcudnn_static.a");
+        let cudnn_lib = linux_locate_parent_dir("libcudnn.so");
         println!("cargo:rustc-link-search=native={}", cudnn_lib);
-        println!("cargo:rustc-link-lib=static=cudnn_static");
+        println!("cargo:rustc-link-lib=dylib=cudnn");
         linux_locate_parent_dir("include/cuda.h")
     } else {
         unreachable!()
@@ -43,6 +43,7 @@ fn main() {
 
   let bindings = bindgen::Builder::default()
     .raw_line("#![allow(warnings)]")
+    .raw_line("mod tests;")
     .header("wrapper.h")
     .clang_arg("-I")
     .clang_arg(cuda_include)
