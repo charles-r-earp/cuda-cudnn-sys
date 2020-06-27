@@ -1,10 +1,15 @@
 [package]
 name = "cuda-cudnn-sys"
-version = "0.1.0"
-authors = ["charles-r-earp <charles.r.earp@gmail.com>"]
+version = "0.0.1"
+authors = ["Charles R Earp <charles.r.earp@gmail.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT/Apache-2.0"
+description = "Rust wrapper for cuDNN"
+homepage = "https://github.com/charles-r-earp/cuda-cudnn-sys"
+repository = "https://github.com/charles-r-earp/cuda-cudnn-sys"
+keywords = ["cuda", "cudnn"]
+categories = ["science"]
+readme = "README.md"
 
 [dependencies]
 libc = "0.2.71"
