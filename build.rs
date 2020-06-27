@@ -1,45 +1,20 @@
-#![allow(warnings)]
-use static_assertions::assert_cfg;
-use std::{
-  env,
-  ffi::CString,
-  path::{Path, PathBuf},
-  process::Command,
-};
+use std::env;
 
-#[cfg(target_os = "linux")]
-fn linux_locate_parent_dir(name: impl AsRef<str>) -> String {
-  let path = Command::new("locate")
-    .arg(name.as_ref())
-    .arg("--limit")
-    .arg("1")
-    .output()
-    .unwrap()
-    .stdout;
-  let path = CString::new(path).unwrap().into_string().unwrap();
-  let path = path.lines().next().unwrap();
-  Path::new(path)
-    .parent()
-    .unwrap()
-    .to_str()
-    .unwrap()
-    .to_string()
-}
-
-fn main() {
-  assert_cfg!(target_os = "linux", "Only Linux supported!");
-
-  let cuda_include = {
-    // locate and link cuda libs and headers
-    if cfg!(target_os = "linux") {
-        let cudnn_lib = linux_locate_parent_dir("libcudnn.so");
-        println!("cargo:rustc-link-search=native={}", cudnn_lib);
-        println!("cargo:rustc-link-lib=dylib=cudnn");
-        linux_locate_parent_dir("include/cuda.h")
-    } else {
-        unreachable!()
+fn main() {  
+  let cuda_include = env::var("CUDA_INCLUDE_DIR")
+    .unwrap_or({
+    if cfg!(target_family = "unix") {
+      String::from("/usr/local/cuda/include")
+    } 
+    else if cfg!(target_family = "windows") {
+      unimplemented!("Set the environmental variable CUDA_INCLUDE_DIR to the path that includes cuda.h")
     }
-  };
+    else {
+      unimplemented!()
+    }
+  });
+  
+  println!("cargo:rustc-link-lib=dylib=cudnn");
 
   let bindings = bindgen::Builder::default()
     .raw_line("#![allow(warnings)]")
@@ -57,6 +32,6 @@ fn main() {
     .parse_callbacks(Box::new(bindgen::CargoCallbacks))
     .rustfmt_bindings(true)
     .generate()
-    .unwrap();
+    .expect("Unable to create bindings. You may need to set the appropriate environmental variables: CUDA_INCLUDE_DIR");
   bindings.write_to_file("src/lib.rs").unwrap();
 }
