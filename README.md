@@ -3,5 +3,14 @@
 # cuda-cudnn-sys
 Rust wrapper for cuDNN, created for autograph https://github.com/charles-r-earp/autograph
 
+# Requirements
+CUDA https://developer.nvidia.com/cuda-downloads and cuDNN https://developer.nvidia.com/cudnn must be installed. See https://github.com/bheisler/RustaCUDA for additional help. You may need to set the environmental variable CUDA_INCLUDE_DIR if cuda.h is not in "/usr/local/cuda/include" for unix platforms. This variable must be set for Windows.
+
 # Supported Platforms
-Currently only supports Linux, tested on Ubuntu-18.04. If you would like to help add support for Windows or macOS, please submit a pull request. The only hurdle is locating and linking to the required cuda libraries. See build.rs.
+Tested on Ubuntu-18.04. Should work on Linux, macOS, and Windows. If you have build errors, please create an issue. 
+
+# Tests
+Verify that the crate works by running:
+```
+cargo test
+```
